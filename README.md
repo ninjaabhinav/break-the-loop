@@ -1,104 +1,131 @@
 # Break the Loop
 
-An AI/ML-assisted behavioral-intervention prototype: it helps someone notice
-the **trigger → urge → automatic behavior → short-term reward → long-term
-cost → repetition** loop behind a habit they want to change, and offers a
-small, specific intervention in the moment instead of just telling them to
-stop.
+### AI-assisted behavioral intervention prototype
 
-This is an experimental behavioral-support tool, not a medical treatment —
-it does not diagnose or claim to cure anything.
+**Break the Loop** explores a simple question:
+
+> What if we could help someone interrupt an unwanted behavioral pattern at the moment the urge occurs — rather than only tracking what happened afterward?
+
+The project is an early full-stack prototype for exploring personalized, context-aware behavioral interventions.
+
+**Live Demo:**  
+https://break-the-loop-rouge.vercel.app
+
+**Repository:**  
+https://github.com/ninjaabhinav/break-the-loop
+
+---
+
+## The Idea
+
+Many unwanted behaviors follow a recurring pattern:
+
+**Trigger → Urge → Automatic Behavior → Short-term Reward → Long-term Cost → Repetition**
+
+Break the Loop focuses on the point between the **urge and the action**.
+
+The prototype allows a user to:
+
+1. Define a behavioral loop they want to understand or change.
+2. Describe what is happening when an urge occurs.
+3. Receive a context-aware intervention.
+4. Try the intervention or choose an alternative.
+5. Record what happened afterward.
+6. Review their behavioral patterns and outcomes over time.
+
+The goal is not to label an interaction simply as a "success" or "failure."
+
+A reduction in urge intensity, a delay in the behavior, or a successful interruption can all provide useful information for future personalization.
+
+---
+
+## V1 Prototype
+
+The current version demonstrates the complete core interaction flow:
+
+**Behavior → Trigger → Context → Urge → Intervention → Outcome → History**
+
+V1 includes:
+
+- Behavioral loop creation
+- Natural-language behavioral input
+- AI-assisted context understanding
+- Urge logging
+- Context-aware intervention recommendations
+- Alternative intervention options
+- Intervention outcome tracking
+- Behavioral history
+- Basic analytics
+- Persistent backend data
+- Full React + FastAPI application flow
+
+---
+
+## Screenshots
+
+### Dashboard
+
+The dashboard provides an overview of active behavioral loops and recent interaction data.
+
+### Log an Urge
+
+Users can record the behavioral situation they are experiencing, including the trigger, context, emotional state, and urge intensity.
+
+### Intervention
+
+The system provides a small intervention intended to create a pause between the urge and the automatic behavior.
+
+### Analytics
+
+Recorded interactions can be reviewed to understand patterns and intervention outcomes over time.
+
+---
+
+## Technology
+
+### Frontend
+
+- React
+- Vite
+- JavaScript
+- CSS
+
+### Backend
+
+- Python
+- FastAPI
+- SQLAlchemy
+
+### AI / ML
+
+- LLM-assisted behavioral understanding
+- Recommendation logic
+- Scikit-learn-based experimentation
+
+### Data
+
+- SQLite for the current prototype
+- Structured behavioral event data
+- Designed to evolve toward a larger longitudinal dataset
+
+---
 
 ## Architecture
 
-```
-React (Vite)  --->  FastAPI  --->  SQLite (swap to PostgreSQL later)
-                       |
-                       |--- Groq LLM: conversational onboarding,
-                       |    turns free text into structured behavioral data
-                       |
-                       '--- Recommendation engine (app/services/ml_engine.py):
-                            - rule-based tag matching (cold start)
-                            - logistic regression, trained on real outcomes
-                              once enough events exist, and used automatically
-                              from then on
-```
-
-This corresponds to Phases 1–4 of the original project plan: schema +
-intervention library, a complete end-to-end React/FastAPI/DB flow, the LLM
-onboarding layer, and a working (if simple) ML recommendation model that
-improves as real outcome data accumulates. Phases 5+ (pilot recruitment,
-contextual bandits, personalization research) build on top of this
-foundation later.
-
-## Project layout
-
-```
-break-the-loop/
-  backend/     FastAPI app, SQLAlchemy models, LLM service, ML engine
-  frontend/    React (Vite) app
-```
-
-## Running it locally
-
-You need two terminals — one for the backend, one for the frontend.
-
-### 1. Backend
-
-```bash
-cd backend
-python3 -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-
-cp .env.example .env
-```
-
-Open `backend/.env` and set:
-- `SECRET_KEY` — any long random string
-- `GROQ_API_KEY` — a free key from https://console.groq.com (the app still
-  runs without one; onboarding just falls back to a plain message asking you
-  to fill in details manually)
-
-Then:
-
-```bash
-uvicorn app.main:app --reload --port 8000
-```
-
-Check it's up: http://localhost:8000/api/health should return `{"status":"ok"}`.
-Interactive API docs: http://localhost:8000/docs
-
-### 2. Frontend
-
-In a second terminal:
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Open http://localhost:5173.
-
-### 3. Try it
-
-1. Register an account.
-2. On the onboarding screen, describe a behavior (e.g. "I always start
-   scrolling Instagram when I'm stressed while studying") or fill the fields
-   manually, then save it as a behavior loop.
-3. From the dashboard, click "I'm having an urge", log the trigger/context/
-   emotion/intensity, and you'll get a ranked intervention recommendation.
-4. Try the intervention, let the timer run (or mark it done early), and
-   report the outcome.
-5. Check Analytics and History to see the data accumulate. Once 30+ outcomes
-   are logged (`ML_MIN_TRAINING_EVENTS` in `.env`), call
-   `POST /api/interventions/retrain-model` (via the Swagger docs at `/docs`,
-   or `curl`) to train the logistic-regression model — recommendations will
-   then switch from `"rule_based"` to `"ml"` automatically.
-
-## Deployment
-
-Once you've got both sides running locally the way you want, let me know and
-I'll walk you through free hosting options for the frontend (static hosting)
-and backend (with a small always-on API tier) that fit this stack.
+```text
+User
+  │
+  ▼
+React Frontend
+  │
+  ▼
+FastAPI Backend
+  │
+  ├── AI / Behavioral Understanding
+  │
+  ├── Intervention Recommendation
+  │
+  └── Behavioral Data
+          │
+          ▼
+       Database
